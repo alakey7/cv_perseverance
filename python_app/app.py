@@ -7,7 +7,7 @@ import json
 import argparse
 
 app = Flask(__name__)
-camera = cv2.VideoCapture(0)  # веб камера
+camera = cv2.VideoCapture(1)  # веб камера
 
 controlX, controlY = 0, 0  # глобальные переменные положения джойстика с web-страницы
 
@@ -60,8 +60,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--port', type=int, default=5000, help="Running port")
-    parser.add_argument("-i", "--ip", type=str, default='127.0.0.1', help="Ip address")
-    parser.add_argument('-s', '--serial', type=str, default='/dev/ttyUSB0', help="Serial port")
+    parser.add_argument("-i", "--ip", type=str, default='172.20.10.4', help="Ip address")
+    parser.add_argument('-s', '--serial', type=str, default='/dev/ttyS0', help="Serial port")
     args = parser.parse_args()
 
     serialPort = serial.Serial(args.serial, 9600)   # открываем uart
