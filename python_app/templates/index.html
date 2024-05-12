@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Perseverance</title>
+    <title>CVbot</title>
 	<script src="/static/joy.js"></script>
 	<style>
 	html{
@@ -43,7 +43,6 @@
 <body>
 	<div id="videoContainer"><img id="video" src="{{ url_for('video_feed') }}"></div>
 	<div id="joyDiv"></div>
-	<div id="joyDiv2"></div>
 	<script type="text/javascript">
 		var joyParam = {"title": "joystick", 
 						"autoReturnToCenter": true, 
@@ -51,14 +50,6 @@
 						"externalStrokeColor": "#800000", 
 						"externalLineWidth": "5"};
 		var joy = new JoyStick('joyDiv', joyParam);
-
-		var joyParam2 = {"title": "joystick2", 
-    						"autoReturnToCenter": true, 
-    						"internalFillColor": "#00FF00", 
-    						"externalStrokeColor": "#008000", 
-    						"externalLineWidth": "5"};
-					
-		var joy2 = new JoyStick('joyDiv2', joyParam2);
 		
 		function control(x, y){
 			var xhttp = new XMLHttpRequest();
