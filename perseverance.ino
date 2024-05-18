@@ -1,6 +1,6 @@
 #define MAX_SPEED 170   // максимальная скорость моторов (0-255)
 
-#define MOTOR_TEST 0    // тест моторов
+#define MOTOR_TEST 1    // тест моторов
 // при запуске крутятся ВПЕРЁД по очереди:
 // FL - передний левый
 // FR - передний правый
@@ -20,9 +20,9 @@
 #include <GyverMotor.h>
 // тут можно поменять моторы местами
 GMotor motorBL(DRIVER2WIRE, MOTOR1_IN2, MOTOR1_IN1, HIGH);
-GMotor motorFL(DRIVER2WIRE, MOTOR2_IN4, MOTOR2_IN3, HIGH);
-GMotor motorFR(DRIVER2WIRE, MOTOR3_IN2, MOTOR3_IN1, HIGH);
-GMotor motorBR(DRIVER2WIRE, MOTOR4_IN4, MOTOR4_IN3, HIGH);
+GMotor motorFL(DRIVER2WIRE, MOTOR3_IN2, MOTOR3_IN1, HIGH);
+GMotor motorFR(DRIVER2WIRE, MOTOR4_IN4, MOTOR4_IN3, HIGH);
+GMotor motorBR(DRIVER2WIRE, MOTOR2_IN4, MOTOR2_IN3, HIGH);
 
 #include "ArduinoJson.h"
 // json буфер для пакетов от orange pi
@@ -30,36 +30,43 @@ StaticJsonDocument<200> jsondoc;
 
 void setup() {
   Serial.begin(9600);
-  // чуть подразгоним ШИМ https://alexgyver.ru/lessons/pwm-overclock/
-  // Пины D3 и D11 - 980 Гц
-  TCCR2B = 0b00000100;  // x64
-  TCCR2A = 0b00000011;  // fast pwm
-
-  // Пины D9 и D10 - 976 Гц
-  TCCR1A = 0b00000001;  // 8bit
-  TCCR1B = 0b00001011;  // x64 fast pwm
-
   // тест моторов
 #if (MOTOR_TEST == 1)
-  Serial.println("front left");
-  motorFL.run(FORWARD, 100);
-  delay(3000);
-  motorFL.run(STOP);
-  delay(1000);
-  Serial.println("front right");
-  motorFR.run(FORWARD, 100);
-  delay(3000);
-  motorFR.run(STOP);
-  delay(1000);
-  Serial.println("back left");
-  motorBL.run(FORWARD, 100);
-  delay(3000);
-  motorBL.run(STOP);
-  delay(1000);
-  Serial.println("back right");
-  motorBR.run(FORWARD, 100);
-  delay(3000);
-  motorBR.run(STOP);
+ Serial.println("front left");
+ // motorFL.run(FORWARD, 100);
+ motorFL.setMode(AUTO);
+ motorFL.setSpeed(255);
+ delay(3000);
+// motorFL.run(STOP);
+ motorFL.setSpeed(0);
+ motorFL.setMode(STOP);
+ delay(1000);
+ Serial.println("front right");
+// motorFR.run(FORWARD, 100);
+ motorFR.setMode(AUTO);
+ motorFR.setSpeed(255);
+ delay(3000);
+// motorFR.run(STOP);
+ motorFR.setSpeed(0);
+ motorFR.setMode(STOP);
+ delay(1000);
+ Serial.println("back left");
+ // motorBL.run(FORWARD, 100);
+ motorBL.setMode(AUTO);
+ motorBL.setSpeed(255);
+ delay(3000);
+ // motorBL.run(STOP);
+ motorBL.setSpeed(0);
+ motorBL.setMode(STOP);
+ delay(1000);
+ Serial.println("back right");
+// motorBR.run(FORWARD, 100);
+ motorBR.setMode(AUTO);
+ motorBR.setSpeed(255);
+ delay(3000);
+// motorBR.run(STOP);
+ motorBR.setSpeed(0);
+ motorBR.setMode(STOP);
 #endif
   // минимальный сигнал на мотор
   motorFR.setMinDuty(0);
