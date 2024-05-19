@@ -16,11 +16,10 @@ LX, LY = 0, 0  # глобальные переменные положения л
 def getFramesGenerator():
     """ Генератор фреймов для вывода в веб-страницу, тут же можно поиграть с openCV"""
     while True:
-        time.sleep(0.01)    # ограничение fps (если видео тупит, можно убрать)
         success, frame = camera.read()  # Получаем фрейм с камеры
         if success:
             # уменьшаем разрешение кадров (если видео тупит, можно уменьшить еще больше)
-            frame = cv2.resize(frame, (320, 240), interpolation=cv2.INTER_AREA)
+            frame = cv2.resize(frame, (220, 165), interpolation=cv2.INTER_AREA)
             # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)   # перевод изображения в градации серого
             # _, frame = cv2.threshold(frame, 127, 255, cv2.THRESH_BINARY)  # бинаризуем изображение
             _, buffer = cv2.imencode('.jpg', frame)
