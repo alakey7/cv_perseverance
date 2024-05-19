@@ -43,14 +43,14 @@ def index():
 @app.route('/control')
 def control():
     """ Пришел запрос на управление роботом """
-    global RX, RY, LX, LY
+    global LX, LY, RX, RY
     joy = request.args.get('joy')
     x = float(request.args.get('x'))
     y = float(request.args.get('y'))
     if joy == "joystick1":
-        RX, RY = x, y
-    elif joy == "joystick2":
         LX, LY = x, y
+    elif joy == "joystick2":
+        RX, RY = x, y
     return '', 200, {'Content-Type': 'text/plain'}
 
 
