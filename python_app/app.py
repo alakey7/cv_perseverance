@@ -41,8 +41,8 @@ def control():
     """ Пришел запрос на управление роботом """
     global RX, RY, LX, LY
     joy = request.args.get('joy')
-    x = float(request.args.get('x')) / 100.0
-    y = float(request.args.get('y')) / 100.0
+    x = float(request.args.get('x'))
+    y = float(request.args.get('y'))
     if joy == "joystick1":
         RX, RY = x, y
     elif joy == "joystick2":
