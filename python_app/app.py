@@ -12,7 +12,6 @@ camera = cv2.VideoCapture(1)  # веб камера
 RX, RY = 0, 0  # глобальные переменные положения правого джойстика
 LX, LY = 0, 0  # глобальные переменные положения левого джойстика
 
-
 def getFramesGenerator():
     """ Генератор фреймов для вывода в веб-страницу, тут же можно поиграть с openCV"""
     while True:
@@ -27,18 +26,15 @@ def getFramesGenerator():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
-
 @app.route('/video_feed')
 def video_feed():
     """ Генерируем и отправляем изображения с камеры"""
     return Response(getFramesGenerator(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
 @app.route('/')
 def index():
     """ Крутим html страницу """
     return render_template('index.html')
-
 
 @app.route('/control')
 def control():
@@ -53,7 +49,6 @@ def control():
         LX, LY = x, y
     return '', 200, {'Content-Type': 'text/plain'}
 
-
 if __name__ == '__main__':
     # пакет, посылаемый на робота
     msg = {
@@ -64,7 +59,6 @@ if __name__ == '__main__':
     }
 
     # параметры робота
-    maxAbsSpeed = 100  # максимальное абсолютное отправляемое значение скорости
     sendFreq = 10  # слать 10 пакетов в секунду
 
     parser = argparse.ArgumentParser()
@@ -82,24 +76,22 @@ if __name__ == '__main__':
         """ функция цикличной отправки пакетов по uart """
         global RX, RY, LX, LY
         while True:
-            # функция аналогичная constrain в arduino
-            RX = max(-maxAbsSpeed, min(RX, maxAbsSpeed))
-            # функция аналогичная constrain в arduino
-            RY = max(-maxAbsSpeed, min(RY, maxAbsSpeed))
-            # функция аналогичная constrain в arduino
-            LX = max(-maxAbsSpeed, min(LX, maxAbsSpeed))
-            # функция аналогичная constrain в arduino
-            LY = max(-maxAbsSpeed, min(LY, maxAbsSpeed))
+            msg["RX"], msg["RY"], msg["LX"], msg["LY"] = RX, RY, LX, LY  # упаковываем
 
-            msg["RX"], msg["RY"] = RX, RY  # упаковываем
-            msg["LX"], msg["LY"] = LX, LY
-
-            serialPort.write(json.dumps(msg, ensure_ascii=False).encode(
-                "utf8"))  # отправляем пакет в виде json файла
+            print(f'Sending: {msg}')  # Отладочное сообщение
+            serialPort.write(json.dumps(msg, ensure_ascii=False).encode("utf8"))  # отправляем пакет в виде json файла
             time.sleep(1 / sendFreq)
 
-    # запускаем тред отправки пакетов по uart с демоном
+    def receiver():
+        """ функция цикличной обработки пакетов от Arduino """
+        while True:
+            if serialPort.in_waiting > 0:
+                line = serialPort.readline().decode('utf-8').rstrip()
+                print(f'Received from Arduino: {line}')
+
+    # запускаем треды отправки и получения пакетов по uart с демоном
     threading.Thread(target=sender, daemon=True).start()
+    threading.Thread(target=receiver, daemon=True).start()
 
     # запускаем flask приложение
     app.run(debug=False, host=args.ip, port=args.port)
